@@ -1,0 +1,4 @@
+- source: neues_in_r.qmd
+  quarto-pub:
+    - id: 77e9d8b0-63bd-4558-b716-f9cca11ce5e7
+      url: 'https://quartopub.com/sites/rstub/neue-entwicklungen-in-r'

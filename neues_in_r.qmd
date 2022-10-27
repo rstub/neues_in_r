@@ -1,0 +1,254 @@
+---
+title: "Neue Entwicklungen in R"
+author: "Ralf Stubner"
+format:
+  revealjs:
+    embed-resources: true
+    multiplex: true  
+lang: de
+bibliography: [references.bib, packages.bib]
+df-print: kable
+smaller: true
+---
+
+## Was ist R? Und was nicht?
+
+::: columns
+::: {.column width="70%"}
+-   R ist eine Programmiersprache für Statistik, Datenanalyse, Graphik und vieles mehr.
+
+    -   Funktional & objektorientiert.
+    -   Freie Software unter GNU GPL.
+
+-   R ist nicht CRAN!
+
+    -   Aber CRAN ist die zentrale Stelle für R Pakete zur Erweiterung der Funktionalität.
+    -   Die meisten neuen Entwicklungen finden hier statt.
+
+-   R wird nicht von RStudio erstellt!
+
+    -   Wir stellen die gleichnamige IDE und viele R Pakete als FOSS bereit.
+    -   Wir vertreiben Software für den Einsatz in Unternehmen.
+
+-   R jetzt auch im Browser: [webr.gwstagg.co.uk](https://webr.gwstagg.co.uk/) (experimentell)
+:::
+
+::: {.column width="30%"}
+![](Rlogo.svg)
+
+@R-base
+:::
+:::
+
+## Native Pipe in R
+
+-   Pipes sind ein Entwurfsmuster für die Verarbeitung von Daten (*pipes and filters*)
+
+-   Pipes in R wurden durch `magrittr` populär
+
+-   Seit R 4.1 gibt es eine *native pipe* in R
+
+-   `x |> f(y) |> g(z)` ist äquivalent zu `g(f(x, y), z)`
+
+```{r}
+#| echo: false
+#| output: false
+library(tidyverse)
+library(tidymodels)
+library(vetiver)
+library(palmerpenguins)
+library(shinyuieditor)
+library(renv)
+knitr::write_bib(file = "packages.bib")
+```
+
+```{r}
+#| echo: true
+#| output-location: column
+library(nycflights13)
+library(dplyr)
+
+flights |>
+  filter(dest == "SFO") |> 
+  group_by(year, month, day) |> 
+  summarize(
+    arr_delay = mean(arr_delay, na.rm = TRUE) 
+  ) |>
+  head()
+```
+
+## Unterschiede zu `magrittr`
+
+::: columns
+Funktion vs. Funktions*aufruf*:
+
+::: {.column width="45%"}
+```{r}
+#| echo: true
+library(palmerpenguins)
+
+penguins %>% 
+  head %>% 
+  nrow
+rnorm(100) %>% 
+  {c(min(.), mean(.), max(.))}
+```
+:::
+
+::: {.column width="55%"}
+```{r}
+#| echo: true
+library(palmerpenguins)
+
+penguins |> 
+  head() |> 
+  nrow()
+rnorm(100) |> 
+  (function(x) {c(min(x), mean(x), max(x))})()
+```
+:::
+
+Platzhaltervariable nur mit Namen (ab R 4.2):
+
+::: {.column width="45%"}
+```{r}
+#| echo: true
+"Ceci n'est pas une pipe" %>% 
+  gsub("une", "un", .)
+```
+:::
+
+::: {.column width="55%"}
+```{r}
+#| echo: true
+"Ceci n'est pas une pipe" |> 
+  gsub("une", "un", x=_)
+```
+:::
+:::
+
+## Weitere Neuerungen
+
+-   Anonyme Funktionen lassen sich seit R 4.1 etwas kompakter formulieren: Statt `function(x) {...}` nun `\(x) {...}`:
+
+```{r}
+#| echo: true
+sapply(penguins, function(x) length(unique(x)))
+sapply(penguins, \(x) length(unique(x)))
+rnorm(100) |> (\(x) {c(min(x), mean(x), max(x))})()
+```
+
+-   Unterstützung für UTF-8 unter Windows seit R 4.2.
+
+-   Seit R 4.0 gilt `stringsAsFactors = FALSE`.
+
+## Data science
+
+![](r4ds.png)
+
+. . .
+
+-   Produktion nicht vergessen!
+
+::: aside
+Quelle: @wickham2016
+:::
+
+## Maschinelles Lernen
+
+::: columns
+::: {.column width="80%"}
+
+`tidymodels`[^1]
+
+:   Eine Sammlung von R Paketen für Modellierung und Maschinelles Lernen. Philosophie, Grammatik und Datenstrukturen entsprechen dem `tidyverse`.
+
+`vetiver`[^2]
+
+:   Trainierte Modelle effizient versionieren, als API produktiv setzen und überwachen.
+:::
+
+::: {.column width="18%"}
+![](tidymodels.svg)
+
+![](logo_small.png)
+:::
+:::
+
+[^1]: @R-tidymodels, [www.tidymodels.org](https://www.tidymodels.org/)
+
+[^2]: @R-vetiver, [vetiver.rstudio.com](https://vetiver.rstudio.com/)
+
+## Produktion & Kommunikation
+
+::: columns
+::: {.column width="80%"}
+
+`renv`[^3]
+
+:   Reproduzierbare Umgebungen für R Projekte. Welche R Pakete in welcher Version wurden benutzt?
+
+`quarto`[^4]
+
+:   Publikationssystem für wissenschaftliche und technische Texte. Verbindet Text mit Code und dessen Output für Dokumente, Bücher, Webseiten, Blogs, Folien und vieles mehr.
+
+`shinyuieditor`[^5]
+
+:   Ein graphisches Werkzeug um das UI einer Shiny-Anwendung zu erstellen. (alpha!)
+:::
+
+::: {.column width="20%"}
+![](renv.svg)
+
+![](quarto.png)
+:::
+:::
+
+[^3]: @R-renv, [rstudio.github.io/renv/](https://rstudio.github.io/renv/)
+
+[^4]: @quarto2022, [www.quarto.org](http2://www.quarto.org)
+
+[^5]: @R-shinyuieditor, [rstudio.github.io/shinyuieditor/](https://rstudio.github.io/shinyuieditor/)
+
+## Wo geht es los? Wo geht es weiter?
+
+Finding Your Way To R
+
+:   <https://education.rstudio.com/learn/>
+
+What They Forgot to Teach You About R
+
+:   <https://rstats.wtf/>
+
+Happy Git with R
+
+:   <https://happygitwithr.com/>
+
+Viele Open Access Bücher
+
+:   z.B. unter <https://bookdown.org/>
+
+## Ansprechpartner
+
+::: columns
+::: {.column width="40%"}
+![](profil2.jpg)
+:::
+
+::: {.column width="60%"}
+Ralf Stubner\
+Solutions Engineer\
+RStudio, PBC
+
+{{< fa envelope title="E-Mail" >}} ralf@rstudio.com
+
+{{< fa envelope title="E-Mail" >}} info@stubner.me
+
+{{< fa globe title="Web" >}} <https://stubner.me>
+:::
+:::
+
+## References
+
+::: {#refs}
+:::
