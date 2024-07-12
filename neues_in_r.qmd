@@ -240,9 +240,9 @@ Ralf Stubner\
 Solutions Engineer\
 RStudio, PBC
 
-{{< fa envelope title="E-Mail" >}} ralf@rstudio.com
+{{< fa envelope title="E-Mail" >}} ralf\@rstudio.com
 
-{{< fa envelope title="E-Mail" >}} info@stubner.me
+{{< fa envelope title="E-Mail" >}} info\@stubner.me
 
 {{< fa globe title="Web" >}} <https://stubner.me>
 :::
